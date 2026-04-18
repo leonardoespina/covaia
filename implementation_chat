@@ -1,0 +1,61 @@
+# Fase 7: Chatbot Táctico Analítico (MVP Offline)
+
+El objetivo es implementar un prototipo funcional de chat de inteligencia directamente en el Dashboard. Como no queremos atarte a dependencias de pago por ahora (como claves de OpenAI), voy a construir un motor "Text-to-SQL Rule-Based" directamente en Python. Esto significa que la IA detectará intenciones mediante palabras clave en tu pregunta y ejecutará consultas SQL reales a la base de datos para responderte con datos exactos matemáticos.
+
+## User Review Required
+> [!IMPORTANT]
+> Revisa las preguntas que la IA será capaz de contestar en este MVP. Si requieres que responda algo en específico (ej. nombres de usuarios, o fechas), menciónalo para programarlo.
+> Una vez apruebes el plan, programaré todas las modificaciones.
+
+## Proposed Changes
+
+---
+
+### Backend Node.js (Puente)
+Para que el Frontend se comunique, necesitamos hacer de puente hacia el motor de IA.
+#### [NEW] `backend/src/modules/chat/chat.routes.js`
+#### [NEW] `backend/src/modules/chat/chat.controller.js`
+- Expondremos `POST /api/chat`, el cual reenviará la consulta del usuario al `ai-engine`.
+#### [MODIFY] `backend/src/app.js`
+- Conectar la ruta `/api/chat`.
+
+---
+
+### AI-Engine Python (Razonamiento a Base de Datos)
+Aquí haremos el análisis del lenguaje natural y la ejecución del SQL hacia PostgreSQL.
+#### [NEW] `ai-engine/app/chat_engine.py`
+- Conexión a PostgreSQL vía `psycopg2`.
+- `procesar_pregunta(mensaje)`: Sistema de clasificación de intenciones por palabras clave (ej: "cuantos", "alertas", "riesgo").
+- Ejecución de SQL (`SELECT COUNT(*) FROM alertas WHERE nivel_riesgo = 'CRITICO'`).
+- Redacción de respuesta estructurada táctica.
+#### [MODIFY] `ai-engine/app/main.py`
+- Exponer el endpoint `POST /chat` a través de FastAPI.
+
+---
+
+### Frontend Vue (Interfaz Conversacional)
+Agregaremos la interfaz tipo WhatsApp/Táctica flotando sobre el mapa.
+#### [NEW] `frontend/src/components/ChatTactico.vue`
+- Interfaz flotante de mensajería (burbujas de chat verdes/negras).
+- Mantiene el historial de la conversación.
+- Efecto visual "escribiendo..." mientras el motor Python procesa los datos de la base de datos.
+#### [MODIFY] `frontend/src/views/DashboardView.vue`
+- Importaremos el componente en la vista para que viva en la esquina inferior derecha.
+#### [MODIFY] `frontend/src/style.css`
+- Estilos de animación y cristal para el componente ChatTactico.
+
+## Open Questions
+> [!NOTE]
+> 1. En este MVP, entrenaré al robot para contestar intenciones como:
+>    - *¿Cuántas alertas críticas tenemos?*
+>    - *¿Hay alertas de deforestación activas?*
+>    - *¿Cuántas alertas en total existen en el sistema?*
+>    ¿Te parecen bien estas intenciones iniciales para demostrar su funcionamiento a tu jurado?
+
+## Verification Plan
+
+### Manual Verification
+1. Ingresar al Dashboard. 
+2. Hacer clic en el icono "💬" inferior derecho.
+3. Preguntarle al chat: "Cuantas alertas criticas hay".
+4. La IA (Python) filtrará la palabra `alertas`, `criticas` e irá a la Base de Datos, devolviendo una frase como: "Comandante, he analizado nuestros servidores y actualmente tenemos X alertas con nivel CRITICO".

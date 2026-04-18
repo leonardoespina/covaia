@@ -1,0 +1,94 @@
+# Plan de Implementación: Fase 1 (Autenticación y RBAC)
+
+Este plan describe los pasos técnicos para implementar la seguridad del sistema COVA-AI. Aseguraremos que solo personal militar autorizado pueda acceder a las distintas partes del sistema dependiendo de su rango/rol, utilizando una autenticación mediante JSON Web Tokens (JWT).
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Diseño Frontend (CSS Vanilla vs Frameworks)**
+> Según los lineamientos del proyecto, el diseño del Frontend debe ser de "Aesthetic Premium" (moderno, oscuro, con efectos tipo *glassmorphism* y micro-animaciones) utilizando **CSS puro (Vanilla CSS)** sin depender de frameworks como Tailwind o Bootstrap. El Login será la primera vista en reflejar este estándar táctico y moderno. ¿Estás de acuerdo con este enfoque visual?
+
+## Proposed Changes
+
+---
+
+### Backend: Configuración y Modelos (Node.js)
+
+Se configurará el ORM (Sequelize) para que mapee las tablas creadas en la base de datos y se programará la lógica de validación de contraseñas y asignación de tokens JWT.
+
+#### [NEW] [user.model.js](file:///c:/cova/backend/src/modules/auth/user.model.js)
+- Definición del modelo Sequelize `User` apuntando a la tabla `usuarios`.
+- Sin sincronización destructiva, solo mapeo directo a la estructura SQL existente.
+
+#### [NEW] [auth.controller.js](file:///c:/cova/backend/src/modules/auth/auth.controller.js)
+- `login`: Busca usuario por cédula, compara el hash usando `bcryptjs`, genera el token usando `jsonwebtoken` (caducidad de 8h).
+- `getMe`: Retorna los datos del usuario basándose en el JWT validado.
+
+#### [NEW] [auth.routes.js](file:///c:/cova/backend/src/modules/auth/auth.routes.js)
+- Expone los endpoints `/api/auth/login` y `/api/auth/me`.
+
+---
+
+### Backend: Middlewares de Seguridad
+
+Se crearán las barreras para proteger rutas futuras (alertas, reportes).
+
+#### [NEW] [auth.middleware.js](file:///c:/cova/backend/src/middleware/auth.middleware.js)
+- Intercepta los requests con encabezado `Authorization: Bearer <token>`.
+- Verifica el JWT. Si es inválido o expirado, retorna `401 Unauthorized`.
+- Inyecta `req.user`.
+
+#### [NEW] [rbac.middleware.js](file:///c:/cova/backend/src/middleware/rbac.middleware.js)
+- Función currificada `requireRole([...roles])`.
+- Valida si `req.user.rol` incluye el rol necesario para la operación. Retorna `403 Forbidden` si no tiene permisos.
+
+#### [MODIFY] [app.js](file:///c:/cova/backend/src/app.js)
+- Registrar las rutas de auth `/api/auth` en la aplicación de Express.
+
+---
+
+### Frontend: Lógica y Servicios (Vue 3)
+
+Construcción de los cimientos para comunicarse con el API de forma segura.
+
+#### [NEW] [api.js](file:///c:/cova/frontend/src/services/api.js)
+- Instancia central de Axios.
+- Interceptor que lee el token desde `localStorage` y lo añade al header `Authorization` en cada petición.
+- Interceptor de respuestas para redigir a `/login` en caso de un error `401`.
+
+#### [NEW] [auth.store.js](file:///c:/cova/frontend/src/stores/auth.store.js)
+- Store de Pinia para manejar el estado global de autenticación (`token`, `user`, `isAuthenticated`).
+- Actions: `login(cedula, password)`, `logout()`, `fetchCurrentUser()`.
+
+#### [NEW] [index.js](file:///c:/cova/frontend/src/router/index.js)
+- Configuración de Vue Router.
+- Rutas: `/login` (pública), `/` (protegida, Dashboard), `/reportes` (protegida).
+- Guardia global `router.beforeEach` para forzar redirección si la ruta requiere auth y no hay sesión activa.
+
+---
+
+### Frontend: Interfaz de Usuario Táctica
+
+#### [NEW] [LoginView.vue](file:///c:/cova/frontend/src/views/LoginView.vue)
+- Interfaz premium e inmersiva adaptada a la temática de Defensa/ZODI.
+- Uso de paleta de colores oscuro (Dark Mode, acentos en verde militar/neón).
+- Formulario reactivo con campos de Cédula y Contraseña, manejo de estados (cargando, error) y botón de ingreso con animaciones dinámicas.
+
+#### [MODIFY] [App.vue](file:///c:/cova/frontend/src/App.vue)
+- Configurar base de `<router-view>` para que renderice las vistas.
+
+#### [MODIFY] [style.css](file:///c:/cova/frontend/src/style.css)
+- Implementación de un "Design System" táctico en CSS.
+- Tokens y variables globales para colores, tipografías y efectos.
+
+## Open Questions
+
+1. **Usuarios Extra:** Ya tenemos a *Sistema Administrador* (00000000). ¿Deseas que agregue un script SQL para crear de una vez perfiles de prueba para un COMANDANTE y un EFECTIVO_CAMPO? Esto facilitaría las pruebas de los roles.
+
+## Verification Plan
+
+### Automated/Manual Tests
+- **Validar Login Fallido:** Intentar loguearse con credenciales incorrectas (debe mostrar mensaje visual de error sin romper el app).
+- **Validar Login Exitoso:** Loguearse con "00000000" / "Admin2026!", asegurar que el Token JWT se almacene.
+- **Validar Protección de Rutas:** Intentar navegar a `/reportes` por la URL y verificar que Vue Router atrape el intento y obligue a ir a `/login`.
+- **Estética:** Asegurarse de que el diseño se vea altamente "Premium", profesional y militar.

@@ -1,0 +1,48 @@
+# Fase 6: Sistema de Simulación Táctica y Realismo (Demo MVP)
+
+Este plan tiene como objetivo dotar al MVP de un alto nivel de realismo operativo simulando la interacción con sensores satelitales (VRSS-2), radares terrestres y Drones UAV. Esta fase está diseñada específicamente para asombrar a un jurado militar mediante una demostración visual imponente y automatizada.
+
+## User Review Required
+
+> [!IMPORTANT]
+> Revisa la mecánica de demostración (Punto 1 y 4). Se propone un botón "Modo Demo" para que tú tengas control de cuándo empiezan a llegar los datos satelitales durante la presentación de tu tesis. Si apruebas el plan, procederé a implementar todo.
+
+## Proposed Changes
+
+---
+
+### 1. Panel de Control "Modo Demo / Simulador"
+#### [MODIFY] `DashboardView.vue`
+- Se creará un pequeño panel oculto o discreto (ejemplo: un switch "Activar Enlace Satelital") que te permita a ti, como presentador, iniciar la simulación.
+- Se agregará una sub-ventana "Console Feed" tipo Matrix/Militar con texto fluyendo simulando: `[10:45:00] VRSS-2 Enlace Establecido...`, `[10:45:02] Barrido térmico zona 4A...`
+
+### 2. Animaciones de Mapa (Radares y Drones)
+#### [MODIFY] `DashboardView.vue` & `style.css`
+- **Radares Terrestres:** Se añadirá una animación CSS circular verde parpadeante expansiva (ping de radar) alrededor de los íconos de "Puesto de Control" en el mapa Leaflet.
+- **Simulador de Drones (UAV):** Se dibujará de manera sutil la ruta de vuelo (un polígono tenue en el mapa) y un icono de dron de reconocimiento moviéndose en el mapa Leaflet de forma automática.
+
+### 3. Evidencias Visuales (IA Generativa)
+- Usaré mis herramientas estables de **generador de imágenes IA** para crear imágenes falsas realistas que vivirán en la carpeta `/public` del frontend:
+  1. *Firma térmica nocturna de una lancha sospechosa.*
+  2. *Imagen satelital del río mostrando antes/después de deforestación.*
+- Cuando una alerta de la simulación se active, la tarjeta de la alerta y su popup en el mapa mostrarán estas fotografías de evidencia.
+
+### 4. Controlador de Simulaciones (Backend)
+#### [NEW] `backend/src/modules/simulation/simulator.controller.js`
+- Crear un nuevo endpoint oculto `POST /api/simulator/trigger`.
+- Al llamarlo desde el dashboard, este endpoint inyectará automáticamente en la base de datos reportes de tipo **"SATÉLITE"** o **"DRON"** con descripciones complejas como *"Anomalía térmica detectada 34°C por encima del histórico. Probable maquinaria en selva densa"*.
+- El Motor de IA que ya creamos atrapará estos datos inmediatamente y generará las alertas rojas en vivo frente a los ojos del jurado.
+- Se emitirán eventos de WebSocket para pintar "Polígonos de Deforestación" temporales (manchas rojas en el mapa).
+
+## Open Questions
+
+> [!NOTE]
+> 1. Para la demostración, ¿prefieres que la simulación inicie con un botón explícito ("Lanzar Simulación") o prefieres que los datos satelitales caigan automáticamente al azar cada X minutos mientras la pantalla esté abierta?
+> 2. Los puestos de control, visualmente emitirán 'ondas de radar' en verde. ¿Te parece bien este color?
+
+## Verification Plan
+
+### Manual Verification
+1. Ingresaremos al Dashboard.
+2. Haremos clic en "Simular Feed VRSS-2".
+3. Verificaremos que el mapa empiece a mostrar el texto "hacker/militar" en el feed, aparezcan alertas nuevas sin haberlas escrito manualmente e incluyan fotografías de visión nocturna o imágenes de satélite.

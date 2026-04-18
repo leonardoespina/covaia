@@ -1,0 +1,136 @@
+version: '3.9'
+
+services:
+
+  # ─────────────────────────────────────────
+  # BASE DE DATOS: PostgreSQL 15 + PostGIS
+  # ─────────────────────────────────────────
+  db:
+    image: postgis/postgis:15-3.3
+    container_name: cova_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - cova_db_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d  # Scripts SQL de inicialización
+    networks:
+      - cova_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────
+  # ADMIN DE BD: pgAdmin 4
+  # ─────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: cova_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8081:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - cova_network
+
+  # ─────────────────────────────────────────
+  # MOTOR DE IA: Python + FastAPI
+  # ─────────────────────────────────────────
+  ai-engine:
+    build:
+      context: ./ai-engine
+      dockerfile: Dockerfile
+    container_name: cova_ai_engine
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ai-engine:/app  # Hot-reload en desarrollo
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - cova_network
+
+  # ─────────────────────────────────────────
+  # BACKEND: Node.js + Express + Socket.io
+  # ─────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cova_backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      AI_ENGINE_URL: ${AI_ENGINE_URL}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app  # Hot-reload en desarrollo
+      - /app/node_modules  # Evita sobrescribir node_modules del contenedor
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-engine:
+        condition: service_started
+    networks:
+      - cova_network
+
+  # ─────────────────────────────────────────
+  # FRONTEND: Vue 3 + Vite
+  # ─────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cova_frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_WS_URL: ${VITE_WS_URL}
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app   # Hot-reload en desarrollo
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - cova_network
+
+# ─────────────────────────────────────────
+# REDES Y VOLÚMENES
+# ─────────────────────────────────────────
+networks:
+  cova_network:
+    driver: bridge
+
+volumes:
+  cova_db_data:
+    driver: local
