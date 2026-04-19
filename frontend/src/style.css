@@ -1245,3 +1245,170 @@ body {
   border: 1px solid rgba(255,255,255,0.2);
   display: block;
 }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE DESIGN (MÓVIL Y TABLETS)
+   ───────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .alerts-grid {
+    grid-template-columns: 1fr;
+  }
+  .alerta-row {
+    grid-template-columns: 140px 1fr auto;
+  }
+  .kpi-strip {
+    flex-wrap: wrap;
+  }
+  .kpi {
+    flex: 1 1 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+    gap: 1rem;
+    z-index: 1000;
+  }
+  
+  .sidebar-logo {
+    padding: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+    font-size: 1.2rem;
+  }
+  
+  .sidebar-nav {
+    flex-direction: row;
+    gap: 0.5rem;
+    margin: 0 auto;
+  }
+  
+  .nav-item {
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+  
+  .nav-item > span:not(.nav-icon):not(.nav-badge) {
+    display: none;
+  }
+  
+  .nav-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    transform: translate(25%, -25%);
+  }
+  
+  .sidebar-user {
+    border-top: none;
+    padding-top: 0;
+    padding-left: 1rem;
+    border-left: 1px solid var(--glass-border);
+    margin-left: auto;
+  }
+  
+  .user-info {
+    display: none;
+  }
+
+  .main-content {
+    height: calc(100vh - 60px);
+  }
+
+  .dashboard-view {
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .tactical-body {
+    flex-direction: column;
+    overflow: visible;
+    height: auto;
+  }
+
+  .map-container {
+    height: 50vh;
+    min-height: 400px;
+    flex: none;
+  }
+
+  .alerts-panel {
+    width: 100%;
+    min-width: 100%;
+    border-left: none;
+    border-top: 1px solid var(--glass-border);
+    height: 50vh;
+    flex: none;
+  }
+
+  .tactical-header {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .kpi-strip {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .kpi {
+    padding: 0.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .reportes-view {
+    padding: 1rem;
+  }
+  
+  .alerts-view {
+    padding: 1rem;
+  }
+  
+  .alerta-row {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 0.8rem;
+  }
+  
+  .row-actions {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .modal-box {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 2rem;
+    margin: 1rem;
+    width: calc(100% - 2rem);
+  }
+  .logo {
+    font-size: 2rem;
+  }
+}
