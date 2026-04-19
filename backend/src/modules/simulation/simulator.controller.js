@@ -35,12 +35,6 @@ const triggerSimulation = async (req, res) => {
         const alertsToGenerate = [alert1, alert2];
 
         for (const a of alertsToGenerate) {
-          await sequelize.query(
-            `INSERT INTO alertas (id, nivel_riesgo, categoria, resumen_ia, patron_detectado, confianza, estado, created_at)
-             VALUES (:id, :nivel_riesgo, :categoria, :resumen_ia, :patron_detectado, :confianza, :estado, NOW())`,
-            { replacements: a }
-          );
-
           const zonasAMO = [
             { nombre: 'Las Claritas (Bloque 4)', lat: 6.17, lng: -61.43 },
             { nombre: 'El Dorado (Bloque 4)', lat: 6.72, lng: -61.61 },
@@ -54,10 +48,33 @@ const triggerSimulation = async (req, res) => {
           const offsetLng = (Math.random() * 0.2) - 0.1;
 
           const fakeReport = {
+            id: uuidv4(),
             latitud: zonaElegida.lat + offsetLat,
             longitud: zonaElegida.lng + offsetLng,
             usuario: { nombre: `SENSOR-${zonaElegida.nombre.split(' ')[0].toUpperCase()}` }
           };
+
+          // 1. Crear el Reporte Padre con coordenadas geográficas primero!
+          await sequelize.query(
+            `INSERT INTO reportes_patrulla (id, descripcion, tipo_evento, latitud, longitud, created_at)
+             VALUES (:id, :descripcion, :tipo_evento, :latitud, :longitud, NOW())`,
+            {
+              replacements: {
+                id: fakeReport.id,
+                descripcion: 'Telemetría Táctica Interceptada Automáticamente',
+                tipo_evento: a.categoria,
+                latitud: fakeReport.latitud,
+                longitud: fakeReport.longitud
+              }
+            }
+          );
+
+          // 2. Crear la Alerta amarrada al reporte
+          await sequelize.query(
+            `INSERT INTO alertas (id, nivel_riesgo, categoria, resumen_ia, patron_detectado, confianza, estado, reporte_id, created_at)
+             VALUES (:id, :nivel_riesgo, :categoria, :resumen_ia, :patron_detectado, :confianza, :estado, :reporte_id, NOW())`,
+            { replacements: { ...a, reporte_id: fakeReport.id } }
+          );
 
           io.emit('nueva_alerta', {
             ...a,
