@@ -12,7 +12,8 @@ def _get_db_connection():
         port=os.getenv("POSTGRES_PORT", "5432"),
         dbname=os.getenv("POSTGRES_DB", "cova_ai_db"),
         user=os.getenv("POSTGRES_USER", "cova_admin"),
-        password=os.getenv("POSTGRES_PASSWORD", "CovaSecure2026!")
+        password=os.getenv("POSTGRES_PASSWORD", "CovaSecure2026!"),
+        sslmode="require" # Estricto para conexiones en la nube Render
     )
 
 def procesar_pregunta(mensaje: str) -> str:
@@ -52,5 +53,6 @@ def procesar_pregunta(mensaje: str) -> str:
             return "Comandante, mi capacidad actual está calibrada para consultar recuentos de alertas (críticas, deforestación, totales). Por favor reescriba su comando."
             
     except Exception as e:
-        print(f"Error procesando chat SQL: {e}")
-        return "Se produjo un error al establecer enlace temporal con la base de datos central (COVA DB)."
+        error_msg = str(e)
+        print(f"Error procesando chat SQL: {error_msg}")
+        return f"Se produjo un error al establecer enlace temporal con la base de datos central (COVA DB).\nDetalle técnico: {error_msg}"
