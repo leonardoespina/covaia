@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const { Server } = require('socket.io');
-const { connectDB } = require('./config/db');
+const { sequelize, connectDB } = require('./config/db');
 
 const app = express();
 const server = http.createServer(app);
@@ -72,8 +72,31 @@ module.exports = { io };
 
 // Arranque
 const PORT = process.env.PORT || 3000;
-connectDB().then(() => {
+connectDB().then(async () => {
+  try {
+    // Sincronizar modelos con la base de datos (vital para nubes como Render donde la BD inicia vacía)
+    await sequelize.sync({ alter: true });
+    
+    // Crear usuario admin por defecto si no existe
+    const bcrypt = require('bcryptjs');
+    const adminExists = await User.findOne({ where: { username: 'cova_admin' } });
+    if (!adminExists) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('admin123', salt);
+      await User.create({
+        username: 'cova_admin',
+        password: hashedPassword,
+        rango: 'COMANDANTE',
+        unidad: 'ZODI-62',
+        rol: 'ADMIN'
+      });
+      console.log('✅ Usuario administrador táctico (cova_admin) inyectado exitosamente.');
+    }
+  } catch (error) {
+    console.error('⚠️ Error sincronizando base de datos en arranque:', error);
+  }
+
   server.listen(PORT, () => {
-    console.log(`🚀 Backend COVA-AI corriendo en http://localhost:${PORT}`);
+    console.log(`🚀 Backend COVA-AI corriendo en puerto ${PORT}`);
   });
 });
