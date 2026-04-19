@@ -77,20 +77,20 @@ connectDB().then(async () => {
     // Sincronizar modelos con la base de datos (vital para nubes como Render donde la BD inicia vacía)
     await sequelize.sync({ alter: true });
     
-    // Crear usuario admin por defecto si no existe
+    // Crear usuario admin por defecto si no existe (alineado con los defaults del Frontend)
     const bcrypt = require('bcryptjs');
-    const adminExists = await User.findOne({ where: { username: 'cova_admin' } });
+    const adminExists = await User.findOne({ where: { username: '00000000' } });
     if (!adminExists) {
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('admin123', salt);
+      const hashedPassword = await bcrypt.hash('Admin2026!', salt);
       await User.create({
-        username: 'cova_admin',
+        username: '00000000',
         password: hashedPassword,
         rango: 'COMANDANTE',
         unidad: 'ZODI-62',
         rol: 'ADMIN'
       });
-      console.log('✅ Usuario administrador táctico (cova_admin) inyectado exitosamente.');
+      console.log('✅ Usuario administrador táctico defecto (00000000) inyectado exitosamente.');
     }
   } catch (error) {
     console.error('⚠️ Error sincronizando base de datos en arranque:', error);
