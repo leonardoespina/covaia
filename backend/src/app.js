@@ -79,15 +79,16 @@ connectDB().then(async () => {
     
     // Crear usuario admin por defecto si no existe (alineado con los defaults del Frontend)
     const bcrypt = require('bcryptjs');
-    const adminExists = await User.findOne({ where: { username: '00000000' } });
+    const adminExists = await User.findOne({ where: { cedula: '00000000' } });
     if (!adminExists) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash('Admin2026!', salt);
       await User.create({
-        username: '00000000',
-        password: hashedPassword,
-        rango: 'COMANDANTE',
-        unidad: 'ZODI-62',
+        nombre: 'Comandante ZODI',
+        cedula: '00000000',
+        password_hash: hashedPassword,
+        rango: 'GENERAL',
+        unidad_id: null,
         rol: 'ADMIN'
       });
       console.log('✅ Usuario administrador táctico defecto (00000000) inyectado exitosamente.');
