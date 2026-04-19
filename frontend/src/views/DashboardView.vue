@@ -394,7 +394,8 @@ const toggleDemo = async () => {
 
 // ── WEBSOCKET ─────────────────────────────────────────
 const initWebSocket = () => {
-  socket = io('http://localhost:3000', { transports: ['websocket'] });
+  const wsUrl = import.meta.env.VITE_WS_URL || 'http://localhost:3000';
+  socket = io(wsUrl, { transports: ['websocket'] });
 
   socket.on('connect', () => {
     wsConnected.value = true;
