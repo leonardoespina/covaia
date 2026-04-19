@@ -4,7 +4,7 @@ import api from '../services/api';
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('cova_token') || null,
-    user: JSON.parse(localStorage.getItem('cova_user') || 'null'),
+    user: (localStorage.getItem('cova_user') && localStorage.getItem('cova_user') !== 'undefined') ? JSON.parse(localStorage.getItem('cova_user')) : null,
     loading: false,
     error: null
   }),
