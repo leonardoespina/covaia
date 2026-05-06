@@ -9,12 +9,17 @@ from app.risk_engine import calcular_riesgo
 from app.pattern_detector import detectar_patron
 from app.summarizer import generar_resumen
 from app.chat_engine import procesar_pregunta
+from app.doc_qa import indexar_documentos
 
 app = FastAPI(
     title="COVA-AI Engine",
     description="Motor de Inteligencia Artificial para el Sistema COVA-AI",
     version="1.1.0"
 )
+
+@app.on_event("startup")
+async def startup_event():
+    indexar_documentos()
 
 class ReporteInput(BaseModel):
     descripcion: str
@@ -90,13 +95,14 @@ async def analyze_report(reporte: ReporteInput):
 
 class ChatInput(BaseModel):
     mensaje: str
+    contexto: str = 'sistema'  # Valores: 'sistema', 'ley', 'manual'
 
 @app.post("/chat")
 async def chat_endpoint(data: ChatInput):
     """
-    Recibe un mensaje en texto humano, lo procesa con Reglas Vectoriales/SQL
-    y devuelve la respuesta analítica para el Frontend.
+    Recibe un mensaje y el contexto seleccionado por el usuario.
+    Enruta la consulta al motor SQL (sistema) o al motor documental (ley/manual).
     """
-    await asyncio.sleep(1.0) # Simular pequeño tiempo de tipeo/razonamiento
-    respuesta = procesar_pregunta(data.mensaje)
+    await asyncio.sleep(0.8)
+    respuesta = procesar_pregunta(data.mensaje, data.contexto)
     return { "respuesta": respuesta }
