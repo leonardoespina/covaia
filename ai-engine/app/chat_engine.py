@@ -13,7 +13,7 @@ def _get_db_connection():
         dbname=os.getenv("POSTGRES_DB", "cova_ai_db"),
         user=os.getenv("POSTGRES_USER", "cova_admin"),
         password=os.getenv("POSTGRES_PASSWORD", "CovaSecure2026!"),
-        sslmode="require" # Estricto para conexiones en la nube Render
+        sslmode=os.getenv("DB_SSL_MODE", "disable" if os.getenv("POSTGRES_HOST", "db") == "db" else "require")
     )
 
 def procesar_pregunta(mensaje: str) -> str:
