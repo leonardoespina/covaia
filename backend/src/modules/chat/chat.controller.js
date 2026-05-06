@@ -8,7 +8,7 @@ const askAI = async (req, res) => {
     }
 
     const aiUrl = process.env.AI_ENGINE_URL || 'http://ai-engine:8000';
-    
+
     const response = await axios.post(`${aiUrl}/chat`, { mensaje });
     res.json({ respuesta: response.data.respuesta });
 
