@@ -21,9 +21,11 @@ def _get_db_connection():
 def procesar_pregunta(mensaje: str, contexto: str = 'sistema') -> str:
     """
     Enruta la consulta exclusivamente por contexto:
-    - 'ley'    -> Motor documental filtrado a ley.pdf
-    - 'manual' -> Motor documental filtrado a manual minero
-    - 'sistema'-> Motor SQL sobre la base de datos de alertas
+    - 'ley'         -> Motor documental filtrado a ley.pdf (Nueva Ley de Minas)
+    - 'manual'      -> Motor documental filtrado a manual minero (Manual Resguardo)
+    - 'reglamento'  -> Motor documental filtrado al Reglamento General de la Ley de Minas
+    - 'coordenadas' -> Motor documental filtrado al procedimiento de coordenadas GPS
+    - 'sistema'     -> Motor SQL sobre la base de datos de alertas
     """
     
     # ─── CONTEXTO: DOCUMENTOS LEGALES ─────────────────────────────────────────
@@ -32,6 +34,12 @@ def procesar_pregunta(mensaje: str, contexto: str = 'sistema') -> str:
     
     if contexto == 'manual':
         return buscar_en_documentos(mensaje, filtro_fuente='manual')
+
+    if contexto == 'reglamento':
+        return buscar_en_documentos(mensaje, filtro_fuente='Reglamento')
+
+    if contexto == 'coordenadas':
+        return buscar_en_documentos(mensaje, filtro_fuente='coordenadas_gps')
     
     # ─── CONTEXTO: BASE DE DATOS OPERATIVA (SQL) ──────────────────────────────
     texto = mensaje.lower().strip()

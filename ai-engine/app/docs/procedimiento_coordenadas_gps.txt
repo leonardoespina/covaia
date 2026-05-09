@@ -1,0 +1,201 @@
+PROCEDIMIENTO DE GEORREFERENCIACION Y COORDENADAS GPS PARA LOCALIZACION DE DELITOS MINEROS
+Suplemento Tecnico al Manual de Resguardo Nacional Minero y Reglamento General de la Ley de Minas
+Jefatura del Servicio de Policia Administrativa Especial y de Investigacion Penal para el Resguardo Nacional Minero
+Guardia Nacional Bolivariana — ZODI N°62 Bolivar
+
+================================================================================
+FUNDAMENTO LEGAL
+================================================================================
+
+Articulo 117 del Reglamento General de la Ley de Minas (RGLM):
+Toda inspeccion ocular sobre actividades mineras ilegales debe incluir la toma de
+las coordenadas geograficas del sitio del suceso mediante Sistema de Posicionamiento
+Global (GPS), asentando en el acta policial: latitud, longitud, datum de referencia
+WGS-84 y zona UTM correspondiente. El funcionario actuante es responsable de la
+exactitud de las coordenadas consignadas en el expediente.
+
+Articulo 118 del Reglamento General de la Ley de Minas (RGLM):
+La localizacion exacta de la actividad minera ilegal debe quedar documentada en el
+expediente administrativo con el SISTEMA DE COORDENADAS GEOGRAFICAS o PLANAS (UTM),
+debiendo indicarse la HOJA CARTOGRAFICA correspondiente del Instituto Geografico de
+Venezuela Simon Bolivar (IGVSB) donde se ubica el sitio del suceso.
+
+Articulo 119 del Reglamento General de la Ley de Minas (RGLM):
+La fijacion fotografica del sitio del suceso con coordenadas GPS visibles en la
+imagen (overlay GPS) constituye prueba tecnica valida para el expediente
+administrativo y penal. Las fotografias deben incluir los metadatos EXIF con
+la georreferenciacion automatica del dispositivo de captura.
+
+Articulo 121 del Reglamento General de la Ley de Minas (RGLM):
+Para delitos que implican dano ambiental (deforestacion, sedimentacion, quema),
+el informe tecnico debe incluir mapa de la zona afectada con las coordenadas GPS
+de los vertices del poligono del dano causado, calculando el area total afectada
+en hectareas (HA).
+
+Articulo 113 del Codigo Organico Procesal Penal (COPP):
+Al elaborar el Acta Policial de Inspeccion Ocular, el funcionario actuante debe
+determinar y registrar el LUGAR EXACTO DEL HECHO mediante coordenadas GPS,
+fijacion fotografica y croquis de ubicacion, los cuales forman parte integral
+del expediente penal.
+
+================================================================================
+PROCEDIMIENTO OPERATIVO: TOMA DE COORDENADAS EN SITIO DE DELITO MINERO
+================================================================================
+
+PASO 1 — ACTIVACION DEL GPS Y VERIFICACION DEL EQUIPO:
+  - Encender el equipo GPS (Sistema de Posicionamiento Global) al arribar a la zona.
+  - Esperar senal satelital estable: minimo 4 satelites recibidos con HDOP menor a 3.0.
+  - Verificar que el datum este configurado en: WGS-84 (estandar FANB y cartografia civil venezolana).
+  - Seleccionar el formato de coordenadas: Grados Decimales (DD) o Grados-Minutos-Segundos (DMS).
+  - Anotar numero de serial del equipo GPS para consignarlo en el acta policial.
+
+PASO 2 — TOMA DE COORDENADAS DEL PUNTO PRINCIPAL DEL SUCESO:
+  - Posicionarse fisicamente en el punto central del area afectada o sitio del hecho.
+  - Registrar LATITUD (Norte/Sur) y LONGITUD (Este/Oeste) con precision minima de 5 decimales.
+  - Anotar la altitud en metros sobre el nivel del mar (msnm).
+  - Repetir la medicion minimo 3 veces consecutivas y promediar los resultados.
+  - Ejemplo de registro correcto: Latitud 6.17234 N / Longitud 61.43521 O / Altitud 287 msnm.
+  - Las coordenadas decimales negativas indican hemisferio Sur (Latitud) u Oeste (Longitud).
+
+PASO 3 — TOMA DE COORDENADAS DE VERTICES (para areas de delito extensas):
+  - Recorrer fisicamente el perimetro del area ilegal tomando coordenadas en cada vertice.
+  - Minimo 4 puntos GPS para demarcacion rectangular; seguir el contorno completo para formas irregulares.
+  - Registrar el azimut magnetico entre puntos para construir el croquis de orientacion.
+  - Para areas de deforestacion: registrar el limite del bosque remanente vs area talada.
+  - Para incursiones de rio: registrar coordenadas del punto de entrada, extraccion y salida.
+  - Para maquinaria retenida: coordenadas GPS de cada pieza de equipo retenido por separado.
+
+PASO 4 — REGISTRO OBLIGATORIO EN ACTA POLICIAL DE INSPECCION OCULAR:
+  El Acta de Inspeccion Ocular debe contener los siguientes datos de forma obligatoria:
+  a) Coordenadas GPS del sitio principal: Latitud y Longitud en sistema WGS-84.
+  b) Sistema de referencia espacial utilizado (WGS-84, REGVEN, o PSAD56 si aplica).
+  c) Datum empleado en el dispositivo GPS en el momento de la medicion.
+  d) Nombre completo y rango del funcionario que tomo las coordenadas.
+  e) Numero de serial o identificacion del equipo GPS utilizado.
+  f) Fecha exacta y hora de la medicion en Hora Oficial de Venezuela (VET = UTC-4).
+  g) Estado, Municipio y Parroquia segun el Sistema de Informacion Geografica (SIG) nacional.
+  h) Cuadrante o Bloque del Arco Minero del Orinoco donde se ubica el sitio.
+  i) Numero de hoja cartografica del IGVSB correspondiente a la zona.
+
+PASO 5 — REPORTE DIGITAL AL SISTEMA COVA-AI:
+  - Ingresar las coordenadas decimales en el sistema COVA-AI (campos Latitud y Longitud).
+  - El sistema ubicara automaticamente el evento en el mapa tactico del Panel de Conciencia Situacional.
+  - Adjuntar fotografias georreferenciadas con metadatos EXIF GPS activos desde el dispositivo de captura.
+  - El Sistema Experto de IA cruzara las coordenadas con patrones previos en un radio de 5 km.
+  - Si se detecta patron (3 o mas eventos en 72 horas en el mismo radio), el nivel de riesgo escala a CRITICO.
+
+================================================================================
+COORDENADAS DE REFERENCIA DEL ARCO MINERO DEL ORINOCO (AMO) — ZODI N°62
+================================================================================
+
+Las siguientes son las coordenadas oficiales de los principales puntos de control
+y referencia geografica en la jurisdiccion del Arco Minero del Orinoco:
+
+PUESTOS DE CONTROL Y BASES OPERATIVAS:
+  Las Claritas (Bloque 4 / Base Sur):         Lat  6.1700 N  /  Lng 61.4300 O
+  Fuerte Cayaurima (El Dorado / Bloque 4):    Lat  6.7200 N  /  Lng 61.6100 O
+  El Callao (Sede ZODI N°62 / Bloque 4):      Lat  7.3400 N  /  Lng 61.8200 O
+  Caicara del Orinoco (Bloque 1):             Lat  7.6300 N  /  Lng 66.1600 O
+  Fuerte Tarabay (Tumeremo / Bloque 4):       Lat  7.2900 N  /  Lng 61.5000 O
+
+ZONAS DE ALTO RIESGO MINERO:
+  Km 88 (Las Cristinas — Icabaru):            Lat  6.0000 N  /  Lng 61.1000 O
+  Maripa (Centro-Sur Bolivar):                Lat  7.4000 N  /  Lng 65.1700 O
+  Pto. Ordaz (Cuidad Guayana — Logistica):   Lat  8.2700 N  /  Lng 62.7300 O
+  San Juan de Merida (Frontera Sur):          Lat  5.3000 N  /  Lng 61.0000 O
+  Upata (Area de Transito):                   Lat  8.0100 N  /  Lng 62.3900 O
+
+================================================================================
+ZONAS UTM PARA EL ARCO MINERO DEL ORINOCO
+================================================================================
+
+El Arco Minero del Orinoco se ubica en las zonas UTM 20N (sector occidental)
+y 19N (sector oriental). Determinar la zona segun la longitud del punto de medicion:
+
+  - Zona UTM 19N: Longitud entre 72°O y 66°O (Caicara del Orinoco, Maripa).
+  - Zona UTM 20N: Longitud entre 66°O y 60°O (El Callao, Las Claritas, Tumeremo).
+  - El meridiano de separacion entre zonas es: 66°O.
+
+Formato de coordenadas UTM: [Zona][Banda] [Este(m)] [Norte(m)]
+Ejemplo: 20N 678432E 683245N (equivalente a Lat 6.17 N / Lng 61.43 O)
+
+================================================================================
+TIPOS DE EVENTOS Y PROCEDIMIENTO DE COORDENADAS ESPECIFICAS POR DELITO
+================================================================================
+
+1. DEFORESTACION — Tala no autorizada para apertura de picas o vias de acceso:
+   Procedimiento GPS: Tomar coordenadas del limite norte, sur, este y oeste del area
+   talada. Registrar coordenadas del inicio de la pica o via y su punto final visible.
+   Calcular el area total afectada en hectareas. Fotografiar con coordenadas superpuestas.
+   Base legal: Arts. 117, 118, 121 RGLM. Decreto 2.216 Arts. 2 y 34. LPA Arts. 14, 15.
+   Nivel de riesgo tipico: ALTO. Escala a CRITICO si el area supera 5 hectareas.
+
+2. INCURSION / DESVIO DE RIO — Alteracion de la capacidad hidraulica o cauce:
+   Procedimiento GPS: Tomar coordenadas del punto de captacion ilegal del agua, punto
+   de desvio del cauce, y punto de descarga. Registrar el nombre del rio o quebrada
+   afectada. Fotografiar el cauce original vs el cauce alterado con coordenadas visibles.
+   Base legal: Arts. 117, 118 RGLM. Ley de Aguas Arts. 21, 80, 113, 123 y 124. COPP 113.
+   Nivel de riesgo tipico: CRITICO por afectacion de recurso hidrico estrategico.
+
+3. MAQUINARIA PESADA DETECTADA — Presencia de equipo pesado en zonas artesanales:
+   Procedimiento GPS: Registrar coordenadas individuales de cada pieza de maquinaria
+   (excavadoras, dragas, retroexcavadoras). Anotar el tipo, marca, modelo y placas si
+   son legibles. Registrar coordenadas de rutas de acceso utilizadas para ingreso.
+   Base legal: Arts. 117, 118 RGLM. LM Art. 89. RGLM Arts. 117, 118, 119, 121.
+   Nivel de riesgo tipico: ALTO. Indica operacion de escala industrial en zona prohibida.
+
+4. COLUMNAS DE HUMO — Quema de desechos o vegetacion sin permiso:
+   Procedimiento GPS: Registrar coordenadas del foco de ignicion (epicentro de la quema).
+   Registrar coordenadas del perimetro del area quemada. Anotar direccion del viento
+   y posibles areas afectadas aguas abajo. Fotografiar el foco con coordenadas superpuestas.
+   Base legal: Arts. 117, 121 RGLM. Decreto 2.219 Art. 36. LPA Arts. 37-40. Decreto 2.216.
+   Nivel de riesgo tipico: MEDIO. Escala a ALTO si el area quemada supera 2 hectareas.
+
+5. SEDIMENTACION EXCESIVA — Descarga de efluentes o colmatacion de rios:
+   Procedimiento GPS: Registrar coordenadas del punto de descarga del efluente al cuerpo
+   de agua. Tomar muestras del efluente para experticia. Registrar coordenadas del area
+   de afectacion visible aguas abajo del punto de descarga. Fotografiar la turbidez del agua.
+   Base legal: Arts. 117, 118, 121 RGLM. LOA Arts. 18-21. LPA Arts. 56, 61, 63.
+   Nivel de riesgo tipico: ALTO por contaminacion de recurso hidrico y dano ambiental.
+
+6. ACTIVIDAD FUERA DE LIMITE — Explotacion fuera del area demarcada en la concesion:
+   Procedimiento GPS: Registrar coordenadas del vertice de la concesion mas proximo a
+   la infraccion (punto del limite legal). Registrar coordenadas del punto donde se
+   detecta la actividad ilegal. Calcular la distancia lineal entre ambos puntos.
+   Comparar con el mapa de la concesion vigente registrado en el Ministerio de Minas.
+   Base legal: Arts. 117, 118, 119, 121 RGLM. LM Arts. 15 y 89. COPP Arts. 113, 114, 115.
+   Nivel de riesgo tipico: CRITICO por violacion directa de los terminos de la concesion.
+
+================================================================================
+GLOSARIO TECNICO GPS PARA FUNCIONARIOS DEL RESGUARDO MINERO
+================================================================================
+
+GPS (Global Positioning System): Sistema de Posicionamiento Global por satelite que
+permite determinar la ubicacion geografica exacta de cualquier punto en la superficie terrestre.
+
+WGS-84 (World Geodetic System 1984): Sistema geodesico de referencia mundial utilizado
+por todos los dispositivos GPS modernos y por la cartografia oficial venezolana (IGVSB).
+
+DATUM: Modelo matematico que define la forma y tamano de la Tierra y el punto de
+referencia para el sistema de coordenadas. En Venezuela se usa WGS-84 como estandar.
+
+LATITUD: Coordenada angular que mide la distancia al norte (N) o al sur (S) del Ecuador.
+Valores entre 0° y 90°. En el Arco Minero: entre 5.5° N y 8.5° N aproximadamente.
+
+LONGITUD: Coordenada angular que mide la distancia al este (E) o al oeste (O) del meridiano
+de Greenwich. En el Arco Minero: entre 60° O y 67° O aproximadamente.
+
+UTM (Universal Transverse Mercator): Sistema de proyeccion cartografica plana que divide
+la Tierra en 60 zonas. El Arco Minero se ubica en las zonas 19N y 20N.
+
+HDOP (Horizontal Dilution of Precision): Indicador de precision horizontal del GPS.
+Valores menores a 3.0 son aceptables para documentacion legal. Ideal menor a 1.0.
+
+GEORREFERENCIACION: Proceso de asignar coordenadas geograficas a un objeto, area o evento,
+vinculandolo a un sistema de referencia espacial conocido (WGS-84, UTM).
+
+OVERLAY GPS: Superposicion visible de las coordenadas GPS sobre una fotografia digital,
+generada por dispositivos de captura con GPS integrado (camaras, smartphones).
+
+IGVSB: Instituto Geografico de Venezuela Simon Bolivar. Organismo oficial que produce
+y distribuye la cartografia nacional de Venezuela, incluyendo las hojas 1:100.000.
