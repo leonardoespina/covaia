@@ -275,12 +275,15 @@ const renderAlertMarkers = () => {
     marker._isAlertMarker = true;
 
     marker.bindPopup(`
-      <div style="color:#0f1115; min-width:200px">
+      <div style="color:#0f1115; min-width:220px">
         <b style="color:${color}">${riskIcon(alerta.nivel_riesgo)} ${alerta.nivel_riesgo}</b><br>
-        <b>${alerta.categoria?.replace('_', ' ')}</b>
+        <b>${alerta.categoria?.replace(/_/g, ' ')}</b>
         ${alerta.confianza ? `<span style="font-size:10px; color:#a0d84a">Confianza IA: ${alerta.confianza}%</span>` : ''}<br>
         <p style="margin:6px 0;font-size:12px">${alerta.resumen_ia}</p>
         ${alerta.evidencia_url ? `<img src="${alerta.evidencia_url}" style="width:100%; border-radius:4px; margin-bottom:5px;"/>` : ''}
+        <div style="margin:5px 0 4px;padding:4px 6px;background:#f0f4f8;border-radius:4px;font-family:monospace;font-size:10px;color:#333">
+          📍 Lat: ${Number(lat).toFixed(5)}°N &nbsp;|&nbsp; Lng: ${Number(lng).toFixed(5)}°O
+        </div>
         <small>Por: ${alerta.reporte?.usuario?.nombre || 'Campo'} — ${alerta.estado}</small>
       </div>
     `);
@@ -329,17 +332,29 @@ const pushLog = (msg) => {
 
 let droneMarkerLayer = null;
 
+// ── MENSAJES DE DETECCION VRSS-2 POR CATEGORIA ──────────────────────────────
+const detectionLogs = [
+  'ESCANEO MULTIESPECTRAL — NDVI ANOMALO DETECTADO...',
+  'FIRMA TERMICA ACTIVA — MOTOR DIESEL IDENTIFICADO...',
+  'ALTERACION HIDRAULICA — CAUCE MODIFICADO CONFIRMADO...',
+  'PLUMA DE HUMO ACTIVA — QUEMA SIN PERMISO EN PROGRESO...',
+  'TURBIDEZ CRITICA — EFLUENTES EN CUERPO DE AGUA...',
+  'CRUCE SHAPEFILE — ACTIVIDAD FUERA DE CONCESION...',
+  'APERTURA DE PICA — TALA NO AUTORIZADA DETECTADA...',
+];
+
 const toggleDemo = async () => {
   demoModeActive.value = !demoModeActive.value;
   if(demoModeActive.value) {
-    pushLog("VRSS-2 SATLINK ESTABLISHED...");
-    setTimeout(() => pushLog("BARRIDO TERMICO INICIADO..."), 1000);
+    pushLog("VRSS-2 SATLINK ESTABLISHED — ENLACE SEGURO AES-256...");
+    setTimeout(() => pushLog("BARRIDO TERMICO INFRARROJO INICIADO — ALTITUD 1200m..."), 1200);
     setTimeout(() => {
-      pushLog("UAV DE RECONOCIMIENTO EN RUTA...");
+      const logAleatorio = detectionLogs[Math.floor(Math.random() * detectionLogs.length)];
+      pushLog(`UAV-RECONOCIMIENTO EN RUTA — ${logAleatorio}`);
       if (!droneMarkerLayer && map) {
         const droneIcon = L.divIcon({
           className: '',
-          html: `<div style="font-size: 20px; animation: pulse 1s infinite alternate;">✈️</div>`,
+          html: `<div style="font-size: 20px; animation: pulse 1s infinite alternate;" title="UAV VRSS-2 en misión">✈️</div>`,
           iconSize: [20, 20]
         });
         const zonasDron = [
@@ -347,20 +362,27 @@ const toggleDemo = async () => {
           { lat: 6.72, lng: -61.61 },
           { lat: 7.34, lng: -61.82 },
           { lat: 7.63, lng: -66.16 },
-          { lat: 7.29, lng: -61.50 }
+          { lat: 7.29, lng: -61.50 },
+          { lat: 6.00, lng: -61.10 },
+          { lat: 7.40, lng: -65.17 },
         ];
         const zonaInicio = zonasDron[Math.floor(Math.random() * zonasDron.length)];
 
-        // Initial pos con offset aleatorio táctico
         let droneLat = zonaInicio.lat + (Math.random() * 0.4 - 0.2);
         let droneLng = zonaInicio.lng + (Math.random() * 0.4 - 0.2);
         droneMarkerLayer = L.marker([droneLat, droneLng], { icon: droneIcon }).addTo(map);
+        droneMarkerLayer.bindPopup(`
+          <div style="color:#0f1115;min-width:180px">
+            <b style="color:#a0d84a">✈️ UAV VRSS-2</b><br>
+            <small>Misión de Reconocimiento Activa</small><br>
+            <small>Lat: ${droneLat.toFixed(5)} / Lng: ${droneLng.toFixed(5)}</small>
+          </div>
+        `);
         
-        // Simple animation loop moving marker
         let angle = 0;
         droneInterval = setInterval(() => {
           angle += 0.05;
-          const r = 0.5; // radius
+          const r = 0.5;
           droneMarkerLayer.setLatLng([
             droneLat + r * Math.sin(angle) * 0.5,
             droneLng + r * Math.cos(angle)
@@ -369,16 +391,18 @@ const toggleDemo = async () => {
       }
     }, 2500);
 
-    // Call the backend trigger to start generating fake incidents in 5 seconds
+    // Lanzar detección de anomalías a los 4.5 segundos
     setTimeout(async () => {
       try {
-        pushLog("DETECTANDO ANOMALÍAS...");
+        const logDetect = detectionLogs[Math.floor(Math.random() * detectionLogs.length)];
+        pushLog(`ANALIZANDO TELEMETRIA — ${logDetect}`);
         await api.post('/simulator/trigger');
       } catch (e) {
         console.error(e);
-        pushLog("ERROR DE ENLACE SATELITAL...");
+        pushLog("ERROR DE ENLACE SATELITAL — REINTENTANDO...");
       }
     }, 4500);
+
   } else {
     consoleFeedLogs.value = [];
     if (droneMarkerLayer) {

@@ -17,6 +17,8 @@
           <div class="chat-subtitle" v-else-if="currentMode === 'sistema'">📊 Base de Datos Operativa</div>
           <div class="chat-subtitle" v-else-if="currentMode === 'ley'">📖 Nueva Ley de Minas</div>
           <div class="chat-subtitle" v-else-if="currentMode === 'manual'">📘 Manual de Organización Policial</div>
+          <div class="chat-subtitle" v-else-if="currentMode === 'reglamento'">📋 Reglamento General de la Ley de Minas</div>
+          <div class="chat-subtitle" v-else-if="currentMode === 'coordenadas'">📡 Procedimiento GPS — Localización de Delitos</div>
         </div>
         <button class="chat-close" @click="toggleChat">✖</button>
       </div>
@@ -43,6 +45,20 @@
           <div class="menu-btn-info">
             <span class="menu-btn-title">Manual de Organización</span>
             <span class="menu-btn-desc">Procedimientos de Policía Administrativa y Resguardo Minero</span>
+          </div>
+        </button>
+        <button class="menu-btn menu-btn--reglamento" @click="selectMode('reglamento')">
+          <span class="menu-btn-icon">📋</span>
+          <div class="menu-btn-info">
+            <span class="menu-btn-title">Reglamento Ley de Minas</span>
+            <span class="menu-btn-desc">Reglamento General — artículos, títulos y disposiciones</span>
+          </div>
+        </button>
+        <button class="menu-btn menu-btn--coordenadas" @click="selectMode('coordenadas')">
+          <span class="menu-btn-icon">📡</span>
+          <div class="menu-btn-info">
+            <span class="menu-btn-title">Coordenadas GPS</span>
+            <span class="menu-btn-desc">Procedimiento de georreferenciación y localización del delito</span>
           </div>
         </button>
       </div>
@@ -92,9 +108,11 @@ const currentMode = ref('menu');
 const messages = ref([]);
 
 const modeWelcome = {
-  sistema: 'Conexión a **Base de Datos Operativa** establecida. Puede consultar sobre alertas, incidentes críticos y estadísticas en tiempo real.',
-  ley:     'Base de Conocimiento cargada: **Nueva Ley de Minas de Venezuela**. Responderé exclusivamente sobre esta legislación. ¿Qué artículo o tema desea consultar?',
-  manual:  'Base de Conocimiento cargada: **Manual de Organización de Servicios de Policía Administrativa Especial y de Investigación Penal para el Resguardo Minero**. ¿En qué procedimiento puedo asistirle?',
+  sistema:     'Conexión a **Base de Datos Operativa** establecida. Puede consultar sobre alertas, incidentes críticos y estadísticas en tiempo real.',
+  ley:         'Base de Conocimiento cargada: **Nueva Ley de Minas de Venezuela**. Responderé exclusivamente sobre esta legislación. ¿Qué artículo o tema desea consultar?',
+  manual:      'Base de Conocimiento cargada: **Manual de Organización de Servicios de Policía Administrativa Especial y de Investigación Penal para el Resguardo Minero**. ¿En qué procedimiento puedo asistirle?',
+  reglamento:  'Base de Conocimiento cargada: **Reglamento General de la Ley de Minas**. Puedo consultar artículos, títulos y disposiciones del Decreto N° 1.234 (Gaceta Oficial N° 37.155). ¿Qué artículo desea consultar?',
+  coordenadas: 'Módulo activado: **Procedimiento de Georreferenciación y Coordenadas GPS para Localización de Delitos Mineros**. Puedo guiarle sobre toma de coordenadas, datum WGS-84, registro en acta policial y georeferenciación de los 6 tipos de eventos del Arco Minero. ¿Qué necesita consultar?',
 };
 
 const formatResponse = (text) => {
@@ -121,9 +139,11 @@ const goBack = () => {
 
 const getPlaceholder = () => {
   const placeholders = {
-    sistema: 'Ej: ¿Cuántas alertas críticas hay?',
-    ley:     'Ej: ¿Qué dice la ley sobre deforestación?',
-    manual:  'Ej: ¿Cuál es el procedimiento ante una incursión?',
+    sistema:     'Ej: ¿Cuántas alertas críticas hay?',
+    ley:         'Ej: ¿Qué dice la ley sobre deforestación?',
+    manual:      'Ej: ¿Cuál es el procedimiento ante una incursión?',
+    reglamento:  'Ej: ¿Qué dice el artículo 117 del reglamento?',
+    coordenadas: 'Ej: ¿Cómo tomo coordenadas GPS de maquinaria retenida?',
   };
   return placeholders[currentMode.value] || 'Escriba su consulta...';
 };
@@ -276,9 +296,11 @@ const sendMessage = async () => {
   text-align: left;
 }
 .menu-btn:hover { transform: translateX(4px); }
-.menu-btn--sistema:hover { border-color: rgba(74, 158, 255, 0.6); background: rgba(74, 158, 255, 0.08); }
-.menu-btn--ley:hover     { border-color: rgba(255, 196, 74, 0.6); background: rgba(255, 196, 74, 0.08); }
-.menu-btn--manual:hover  { border-color: rgba(160, 216, 74, 0.6); background: rgba(160, 216, 74, 0.08); }
+.menu-btn--sistema:hover     { border-color: rgba(74, 158, 255, 0.6); background: rgba(74, 158, 255, 0.08); }
+.menu-btn--ley:hover         { border-color: rgba(255, 196, 74, 0.6); background: rgba(255, 196, 74, 0.08); }
+.menu-btn--manual:hover      { border-color: rgba(160, 216, 74, 0.6); background: rgba(160, 216, 74, 0.08); }
+.menu-btn--reglamento:hover  { border-color: rgba(200, 100, 255, 0.6); background: rgba(200, 100, 255, 0.08); }
+.menu-btn--coordenadas:hover { border-color: rgba(0, 220, 200, 0.6); background: rgba(0, 220, 200, 0.08); }
 
 .menu-btn-icon { font-size: 1.4rem; flex-shrink: 0; }
 .menu-btn-info { display: flex; flex-direction: column; gap: 2px; }
