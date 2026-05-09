@@ -10,16 +10,18 @@ from app.pattern_detector import detectar_patron
 from app.summarizer import generar_resumen
 from app.chat_engine import procesar_pregunta
 from app.doc_qa import indexar_documentos
+from app.gemini_client import init_gemini
 
 app = FastAPI(
     title="COVA-AI Engine",
     description="Motor de Inteligencia Artificial para el Sistema COVA-AI",
-    version="1.1.0"
+    version="1.2.0"
 )
 
 @app.on_event("startup")
 async def startup_event():
     indexar_documentos()
+    init_gemini()
 
 class ReporteInput(BaseModel):
     descripcion: str

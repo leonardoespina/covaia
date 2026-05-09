@@ -164,11 +164,12 @@ def _buscar_articulo_exacto(numero_str, indices_validos):
 
 def buscar_en_documentos(pregunta: str, filtro_fuente: str = None) -> str:
     """
-    Busca el fragmento más relevante en los documentos indexados.
-    Si la pregunta menciona un artículo específico, busca ese artículo exacto.
-
-    filtro_fuente: 'ley' -> solo ley.pdf | 'manual' -> solo manual minero | None -> todos
+    Pipeline RAG Híbrido:
+    1. TF-IDF recupera los top-3 artículos más relevantes del documento filtrado.
+    2. Gemini redacta una respuesta contextual basada en esos artículos.
+    3. Si Gemini no está disponible, devuelve el artículo más relevante directamente (fallback).
     """
+    from app.gemini_client import generar_respuesta_legal
     global vectorizer, tfidf_matrix, document_chunks, chunk_sources
 
     if not document_chunks or vectorizer is None:
@@ -186,8 +187,7 @@ def buscar_en_documentos(pregunta: str, filtro_fuente: str = None) -> str:
     else:
         indices_validos = list(range(len(document_chunks)))
 
-    # ─── DETECCIÓN DE ARTÍCULO ESPECÍFICO ────────────────────────────────────
-    # Si el usuario pide "artículo 36", "art. 12", etc., lo buscamos directamente
+    # ─── DETECCIÓN DE ARTÍCULO ESPECÍFICO POR NÚMERO ─────────────────────────
     articulo_match = re.search(r'art[ií]culo\s+(\d+)|art\.\s*(\d+)', pregunta, re.IGNORECASE)
     if articulo_match:
         numero = articulo_match.group(1) or articulo_match.group(2)
@@ -195,24 +195,33 @@ def buscar_en_documentos(pregunta: str, filtro_fuente: str = None) -> str:
         if resultado_exacto:
             return resultado_exacto
 
-    # ─── BÚSQUEDA TF-IDF FILTRADA ─────────────────────────────────────────────
+    # ─── BÚSQUEDA TF-IDF: TOP-3 FRAGMENTOS ───────────────────────────────────
     query_vec = vectorizer.transform([pregunta])
     tfidf_filtrada = tfidf_matrix[indices_validos]
     similitudes = cosine_similarity(query_vec, tfidf_filtrada).flatten()
 
-    best_local_idx = similitudes.argmax()
-    best_score = similitudes[best_local_idx]
-    best_global_idx = indices_validos[best_local_idx]
+    # Obtener los índices de los 3 fragmentos con mayor puntaje
+    top_n = min(3, len(indices_validos))
+    top_local_indices = similitudes.argsort()[::-1][:top_n]
+    top_scores = similitudes[top_local_indices]
 
-    if best_score < 0.05:
+    if top_scores[0] < 0.05:
         return "Comandante, no encontré información suficientemente relevante para su consulta dentro de este documento. Intente reformular su pregunta con términos más específicos."
 
-    fragmento = document_chunks[best_global_idx]
-    fuente = chunk_sources[best_global_idx]
+    # Reunir los fragmentos relevantes y el nombre del documento fuente
+    fragmentos_top = [document_chunks[indices_validos[i]] for i in top_local_indices if similitudes[i] >= 0.03]
+    fuente_principal = chunk_sources[indices_validos[top_local_indices[0]]]
 
+    # ─── GEMINI: REDACCIÓN CONTEXTUAL ─────────────────────────────────────────
+    respuesta_gemini = generar_respuesta_legal(pregunta, fragmentos_top, fuente_principal)
+    if respuesta_gemini:
+        return respuesta_gemini
+
+    # ─── FALLBACK: RAG BÁSICO (si Gemini no está disponible) ─────────────────
+    fragmento = fragmentos_top[0]
     respuesta = (
-        f"Consultando **{fuente}**, encontré el siguiente extracto relevante:\n\n"
+        f"Consultando **{fuente_principal}**, encontré el siguiente extracto relevante:\n\n"
         f"> *\"{fragmento}\"*\n\n"
-        f"_(Coincidencia léxica: {int(best_score*100)}%)_"
+        f"_(Coincidencia léxica: {int(top_scores[0]*100)}% — Modo RAG básico)_"
     )
     return respuesta
